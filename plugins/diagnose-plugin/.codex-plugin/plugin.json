@@ -1,0 +1,21 @@
+{
+  "name": "diagnose-plugin",
+  "version": "0.1.0",
+  "description": "Guided diagnostics with human-approved local and remote tools.",
+  "author": {
+    "name": "Ronaldo Mafra"
+  },
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Diagnose",
+    "shortDescription": "Interactive and human-approved diagnostics",
+    "longDescription": "Guides technical investigations and uses locally approved tools to inspect systems, networks and databases.",
+    "developerName": "Ronaldo Mafra",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Read"],
+    "defaultPrompt": [
+      "Use $diagnose to investigate this issue interactively."
+    ]
+  }
+}

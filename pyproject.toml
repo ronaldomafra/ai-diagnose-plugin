@@ -1,0 +1,90 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "diagnose-plugin"
+version = "0.1.0"
+description = "Human-approved diagnostic orchestration for Codex."
+readme = "README.md"
+authors = [{ name = "Ronaldo Mafra", email = "info.ronaldomafra@gmail.com" }]
+requires-python = ">=3.12"
+dependencies = [
+  "aiosqlite>=0.21,<1",
+  "anyio>=4.9,<5",
+  "cryptography>=45,<47",
+  "mcp>=1.27.2,<2",
+  "platformdirs>=4.3,<5",
+  "prompt-toolkit>=3.0.51,<4",
+  "pydantic>=2.11,<3",
+  "pywin32>=310; sys_platform == 'win32'",
+  "pyyaml>=6.0.2,<7",
+  "rich>=14,<15",
+]
+
+[project.optional-dependencies]
+ssh = ["asyncssh>=2.21,<3"]
+http = ["httpx>=0.28,<1"]
+postgresql = ["psycopg[binary]>=3.2,<4", "sqlglot>=27,<29"]
+sqlserver = ["pyodbc>=5.2,<6", "sqlglot>=27,<29"]
+mysql = ["asyncmy>=0.2.10,<1", "sqlglot>=27,<29"]
+all = [
+  "asyncmy>=0.2.10,<1",
+  "asyncssh>=2.21,<3",
+  "httpx>=0.28,<1",
+  "psycopg[binary]>=3.2,<4",
+  "pyodbc>=5.2,<6",
+  "sqlglot>=27,<29",
+]
+
+[project.scripts]
+diagnose-mcp = "diagnose.mcp.server:main"
+diagnose-terminal = "diagnose.terminal.server:main"
+
+[dependency-groups]
+dev = [
+  "hypothesis>=6.135,<7",
+  "mypy>=1.16,<2",
+  "pytest>=8.4,<9",
+  "pytest-asyncio>=1.0,<2",
+  "pytest-cov>=6.2,<7",
+  "pytest-timeout>=2.4,<3",
+  "ruff>=0.12,<1",
+  "types-pyyaml>=6.0.12.20250516",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/diagnose"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/README.md", "/src", "/plugins", "/doc", "/tests", "/pyproject.toml"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-config --strict-markers"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+timeout = 20
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "C4", "SIM", "RUF"]
+ignore = ["B008"]
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["win32api.*", "win32con.*", "win32security.*"]
+ignore_missing_imports = true

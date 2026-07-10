@@ -1,0 +1,6 @@
+{
+  "diagnose": {
+    "command": "diagnose-mcp",
+    "args": []
+  }
+}

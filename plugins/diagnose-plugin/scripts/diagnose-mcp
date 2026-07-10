@@ -1,0 +1,55 @@
+#!/bin/sh
+set -efu
+
+fail() {
+  printf '%s\n' "diagnose-mcp launcher: $*" >&2
+  exit 1
+}
+
+script_dir=$(CDPATH= cd -- "$(dirname "$0")" 2>/dev/null && pwd -P) ||
+  fail "cannot resolve the launcher directory."
+script_path="$script_dir/$(basename "$0")"
+
+find_installed_command() {
+  previous_ifs=$IFS
+  IFS=:
+  for path_dir in ${PATH:-}; do
+    [ -n "$path_dir" ] || path_dir=.
+    candidate="$path_dir/diagnose-mcp"
+    if [ -f "$candidate" ] && [ -x "$candidate" ]; then
+      candidate_dir=$(CDPATH= cd -- "$(dirname "$candidate")" 2>/dev/null && pwd -P) ||
+        continue
+      candidate_path="$candidate_dir/$(basename "$candidate")"
+      if [ "$candidate_path" != "$script_path" ] && ! [ "$candidate_path" -ef "$script_path" ]; then
+        printf '%s\n' "$candidate_path"
+        IFS=$previous_ifs
+        return 0
+      fi
+    fi
+  done
+  IFS=$previous_ifs
+  return 1
+}
+
+diagnose_command=$(find_installed_command) ||
+  fail "diagnose-mcp was not found on PATH. Install the diagnose wheel with 'uv tool install <wheel>' and restart Codex."
+
+if command -v python3 >/dev/null 2>&1; then
+  python_command=$(command -v python3)
+elif command -v python >/dev/null 2>&1; then
+  python_command=$(command -v python)
+else
+  fail "Python 3.12 or newer is required. Install Python, reinstall the diagnose wheel, and restart Codex."
+fi
+
+if ! "$python_command" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)' >/dev/null 2>&1; then
+  python_version=$(
+    "$python_command" -c 'import sys; print(".".join(map(str, sys.version_info[:3])))' 2>/dev/null ||
+      printf '%s' unknown
+  )
+  fail "Python 3.12 or newer is required; found $python_version."
+fi
+
+# Preserve DIAGNOSE_IPC_ENDPOINT and pass explicit --endpoint overrides unchanged.
+# The MCP process owns protocol errors, including TERMINAL_SERVER_OFFLINE.
+exec "$diagnose_command" "$@"

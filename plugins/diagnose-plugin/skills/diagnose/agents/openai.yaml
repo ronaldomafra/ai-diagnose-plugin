@@ -1,0 +1,14 @@
+interface:
+  display_name: "Diagnose"
+  short_description: "Guided, human-approved technical diagnosis"
+  default_prompt: "Use $diagnose to investigate this issue interactively at pleno level."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "diagnose"
+      description: "Human-approved diagnostic tools"
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: false
