@@ -94,6 +94,45 @@ diagnose-mcp
 diagnose-terminal
 ```
 
+### Instalação assistida no Linux
+
+No Linux, o caminho mais simples é executar o instalador deste repositório:
+
+~~~bash
+chmod +x scripts/install-linux.sh
+./scripts/install-linux.sh --update-path
+~~~
+
+Se o uv ainda não estiver instalado, acrescente --install-uv:
+
+~~~bash
+./scripts/install-linux.sh --install-uv --update-path
+~~~
+
+O script cria o wheel, instala os comandos, cria arquivos de configuração
+seguros apenas quando eles ainda não existem, prepara
+~/plugins/diagnose-plugin, registra o marketplace pessoal e executa
+codex plugin add diagnose-plugin@personal. Ele nunca sobrescreve
+settings.yaml, targets.yaml ou policies.yaml.
+
+Opções úteis:
+
+- --dry-run: mostra as ações sem modificar o sistema;
+- --config-dir DIR: configura outro diretório em vez de
+  ~/.config/diagnose;
+- --skip-plugin: instala apenas o pacote e a configuração, sem exigir Codex;
+- --start: inicia o Terminal Server visível ao final;
+- --help: mostra todas as opções.
+
+O --update-path é opcional, mas recomendado: ele pede ao uv para configurar o
+PATH em novos terminais. O instalador requer Python 3.12+, Codex CLI e os
+auxiliares de plugin distribuídos com o Codex. Para conferir pré-requisitos sem
+fazer alterações, execute:
+
+~~~bash
+./scripts/install-linux.sh --dry-run
+~~~
+
 ## Instalação do plugin no Codex
 
 O bundle do plugin está em `plugins/diagnose-plugin`. O fluxo pessoal padrão
@@ -110,6 +149,10 @@ reinstale com:
 ```powershell
 codex plugin add diagnose-plugin@personal
 ```
+
+No Linux, prefira o instalador assistido da seção anterior. Os passos abaixo
+são a alternativa manual, útil principalmente no Windows ou para depuração do
+staging.
 
 Para preparar esse staging em uma nova máquina com Codex instalado, use o
 scaffold de plugin e copie o bundle deste repositório para o destino criado:

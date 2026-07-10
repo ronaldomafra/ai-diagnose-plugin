@@ -57,7 +57,7 @@ dev = [
 packages = ["src/diagnose"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/README.md", "/src", "/plugins", "/doc", "/tests", "/pyproject.toml"]
+include = ["/README.md", "/src", "/plugins", "/doc", "/scripts", "/tests", "/pyproject.toml"]
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-config --strict-markers"
